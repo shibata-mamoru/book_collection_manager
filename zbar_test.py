@@ -24,6 +24,17 @@ def run():
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+    
+    api = 'https://api.openbd.jp/v1/get?isbn={isbn}'
+    url = api.format(isbn=isbn_code[0])
+    result = requests.get(url)
+
+    data = json.loads(result.text)
+    print(data[0]['onix']['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content'])
+    print(data[0]['onix']['DescriptiveDetail']['Collection'].keys())
+    print(data[0]['onix']['DescriptiveDetail']['Contributor'])
+    print(data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink'])
+
 
 def main():
 
