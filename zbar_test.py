@@ -16,7 +16,11 @@ def run():
         ret,frame = capture.read()
         data = decode(frame)
         code = list(map(lambda x: x[0].decode('utf-8','ignore'),data))
-        print(code)
+        isbn_code = list(map(lambda x: int(x),list(filter(check_isbn,code))))
+        if isbn_code:
+            print(isbn_code)
+            break
+      #  print(code)
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
