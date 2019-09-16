@@ -10,6 +10,17 @@ def check_isbn(code_str):
     else:
         False
 
+def run():
+    capture = cv2.VideoCapture(0)
+    while True:
+        ret,frame = capture.read()
+        data = decode(frame)
+        code = list(map(lambda x: x[0].decode('utf-8','ignore'),data))
+        print(code)
+        cv2.imshow('frame',frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 def main():
 
     # openBD apiのurlの雛形
@@ -43,4 +54,5 @@ def main():
     print(data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink'])
 
 if __name__ == "__main__":
-    main()
+    #main()
+    run()
