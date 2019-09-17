@@ -21,10 +21,12 @@ def get_bookdata(isbn_code):
     return json_data
 
 def get_thumbnail(thumbnail_url):
+    '''OpenBDのサムネイルURLからjpeg画像を取得し，OpenCV形式で返す関数'''
     thumbnail_data = requests.get(thumbnail_url)
     arr = np.frombuffer(thumbnail_data.content,np.uint8)
     img = cv2.imdecode(arr,cv2.IMREAD_UNCHANGED)
-    pass
+
+    return img
 
 def run():
     capture = cv2.VideoCapture(0)
@@ -37,8 +39,11 @@ def run():
         if isbn_code_temp and len(isbn_code_temp) == 1:
             isbn_code = isbn_code_temp[0]
             cv2.rectangle(frame,(isbn_code['pos'][0],isbn_code['pos'][1]),(isbn_code['pos'][0]+isbn_code['pos'][2],isbn_code['pos'][1]+isbn_code['pos'][3]),(0,0,255))
-        json_data = get_bookdata(isbn_code['isbn'])
-        book_data = json.loads(json_data)
+            json_data = get_bookdata(isbn_code['isbn'])
+            book_data = json.loads(json_data)
+            thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+            thumbnail_img = get_thumbnail(thumbnail_url)
+            frame[0:thumbnail_img.shape[0],0:thumbnail_img.shape[1]] = thumbnail_img
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -88,8 +93,11 @@ def main():
 
     arr = np.frombuffer(thumbnail_data.content,np.uint8)
     img = cv2.imdecode(arr,cv2.IMREAD_UNCHANGED)
+    capture = cv2.VideoCapture(0)
     while True:
-        cv2.imshow('frame',img)
+        ret,frame = capture.read()
+        frame[0:img.shape[0],0:img.shape[1]] = img
+        cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
           break
     print(type(img))
