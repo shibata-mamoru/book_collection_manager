@@ -11,3 +11,23 @@
 1. 保管場所の登録機能の追加
 1. 保管場所の移動などへの対応
 1. GCPなどを利用したクラウド化
+
+
+## Dependent
+* pyzbar
+* OpenCV
+* Numpy
+
+## Install
+* Install pyzar
+```
+pip install pyzbar
+```
+* Install opencv
+```
+pip install opencv-python
+```
+or
+```
+conda install opencv
+```
