@@ -5,35 +5,41 @@ import json
 import pprint
 
 def check_isbn(code_str):
-    if '978' in code_str:
+    if '978' in code_str[0]:
         return True
     else:
         False
+
+def get_bookdata(isbn_code):
+    api = 'https://api.openbd.jp/v1/get?isbn={isbn}'
+    url = api.format(isbn=isbn_code)
+    result = requests.get(url)
+    json_data = result.text
+
+    return json_data
 
 def run():
     capture = cv2.VideoCapture(0)
     while True:
         ret,frame = capture.read()
         data = decode(frame)
-        code = list(map(lambda x: x[0].decode('utf-8','ignore'),data))
-        isbn_code = list(map(lambda x: int(x),list(filter(check_isbn,code))))
-        if isbn_code:
-            print(isbn_code)
-            break
-      #  print(code)
+        code = list(map(lambda x: [x[0].decode('utf-8','ignore'),x[2]],data))
+        
+        isbn_code_temp = list(map(lambda x: {'isbn':int(x[0]),'pos':x[1]},list(filter(check_isbn,code))))
+        if isbn_code_temp and len(isbn_code_temp) == 1:
+            isbn_code = isbn_code_temp[0]
+            cv2.rectangle(frame,(isbn_code['pos'][0],isbn_code['pos'][1]),(isbn_code['pos'][0]+isbn_code['pos'][2],isbn_code['pos'][1]+isbn_code['pos'][3]),(0,0,255))
+            #break
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    
-    api = 'https://api.openbd.jp/v1/get?isbn={isbn}'
-    url = api.format(isbn=isbn_code[0])
-    result = requests.get(url)
+    json_data = get_bookdata(isbn_code['isbn'])
 
-    data = json.loads(result.text)
-    print(data[0]['onix']['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content'])
-    print(data[0]['onix']['DescriptiveDetail']['Collection'].keys())
-    print(data[0]['onix']['DescriptiveDetail']['Contributor'])
-    print(data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink'])
+    book_data = json.loads(json_data)
+    print(book_data[0]['onix']['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content'])
+    print(book_data[0]['onix']['DescriptiveDetail']['Collection'].keys())
+    print(book_data[0]['onix']['DescriptiveDetail']['Contributor'])
+    print(book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink'])
 
 
 def main():
