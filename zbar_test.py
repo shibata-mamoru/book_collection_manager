@@ -41,9 +41,10 @@ def run():
             cv2.rectangle(frame,(isbn_code['pos'][0],isbn_code['pos'][1]),(isbn_code['pos'][0]+isbn_code['pos'][2],isbn_code['pos'][1]+isbn_code['pos'][3]),(0,0,255))
             json_data = get_bookdata(isbn_code['isbn'])
             book_data = json.loads(json_data)
-            thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
-            thumbnail_img = get_thumbnail(thumbnail_url)
-            frame[0:thumbnail_img.shape[0],0:thumbnail_img.shape[1]] = thumbnail_img
+            if book_data[0]:
+                thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+                thumbnail_img = get_thumbnail(thumbnail_url)
+                frame[0:thumbnail_img.shape[0],0:thumbnail_img.shape[1]] = thumbnail_img
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -103,5 +104,5 @@ def main():
     print(type(img))
 
 if __name__ == "__main__":
-    main()
-    #run()
+    #main()
+    run()
