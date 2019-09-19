@@ -11,9 +11,18 @@ def check_isbn(code_str):
     else:
         False
 
-def get_bookdata(isbn_code):
+def get_bookdata_openbd(isbn_code):
     '''ISBNコードの整数を入力としてOpenBD APIから帰ってきたjsonデータを返す関数'''
     api = 'https://api.openbd.jp/v1/get?isbn={isbn}'
+    url = api.format(isbn=isbn_code)
+    result = requests.get(url)
+    json_data = result.text
+
+    return json_data
+
+def get_bookdata_rakuten(isbn_code):
+    '''ISBNコードの整数を入力としてRakuten APIから帰ってきたjsonデータを返す関数'''
+    api = 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&isbnjan={isbn}&applicationId=1088097277669615348'
     url = api.format(isbn=isbn_code)
     result = requests.get(url)
     json_data = result.text
@@ -39,7 +48,7 @@ def run():
         if isbn_code_temp and len(isbn_code_temp) == 1:
             isbn_code = isbn_code_temp[0]
             cv2.rectangle(frame,(isbn_code['pos'][0],isbn_code['pos'][1]),(isbn_code['pos'][0]+isbn_code['pos'][2],isbn_code['pos'][1]+isbn_code['pos'][3]),(0,0,255))
-            json_data = get_bookdata(isbn_code['isbn'])
+            json_data = get_bookdata_openbd(isbn_code['isbn'])
             book_data = json.loads(json_data)
             if book_data[0]:
                 thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
@@ -48,7 +57,7 @@ def run():
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    json_data = get_bookdata(isbn_code['isbn'])
+    json_data = get_bookdata_openbd(isbn_code['isbn'])
 
     book_data = json.loads(json_data)
     print(book_data[0]['onix']['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content'])
