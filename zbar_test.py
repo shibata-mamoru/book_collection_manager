@@ -72,7 +72,7 @@ def main():
     api = 'https://api.openbd.jp/v1/get?isbn={isbn}'
 
     # 画像読み込み
-    image = cv2.imread("img1.jpg")
+    image = cv2.imread("img4.png")
 
     # バーコード変換
     data = decode(image)

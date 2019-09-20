@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>getUserMedia-Demo</title>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
 
+<form action="/bookdata" method="post">
+    <input type="text" name="name"/>
+    <input type="submit" name="submit" value="送信"/>
+</form>
 <!-- カメラ映像が描画されます。 -->
 <video id="video_area" style="background-color: #000" autoplay></video>
 
@@ -18,7 +16,7 @@
 <h2>img</h2>
 <img id="img">
 
-</body>
+
 <script>
 
     // getUserMedia が使えないときは、『getUserMedia()が使えないブラウザだよ』と言ってね。
@@ -63,4 +61,4 @@
 
 </script>
 
-</html>
+{% endblock %}
