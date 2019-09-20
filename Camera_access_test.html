@@ -12,6 +12,11 @@
 
 <!-- 押下するとカメラ映像描画を開始します。 -->
 <button id="start_btn">映像表示開始</button>
+<button id="capture">画像取得</button>
+<h2>canvas</h2>
+<canvas id="canvas"></canvas>
+<h2>img</h2>
+<img id="img">
 
 </body>
 <script>
@@ -25,6 +30,7 @@
 
     // 操作する画面エレメント変数定義します。
     const $start = document.getElementById('start_btn');   // スタートボタン
+    const $capture = document.getElementById('capture');
     const $video = document.getElementById('video_area');  // 映像表示エリア
 
     // 「スタートボタン」を押下で、getUserMedia を使って映像を「映像表示エリア」に表示するよ。
@@ -33,6 +39,27 @@
         .then(stream => $video.srcObject = stream)
         .catch(err => alert(`${err.name} ${err.message}`));
     }, false);
+
+    $capture.addEventListener('click', () =>{
+        var $canvas = document.getElementById('canvas');
+        var ctx = $canvas.getContext('2d');
+        var h = $video.offsetHeight;
+        var w = $video.offsetWidth;
+        $canvas.setAttribute('width',w);
+        $canvas.setAttribute('height',h);
+        ctx.drawImage($video,0,0,w,h);
+        $canvas.toBlob(function(blob) {
+            var $img = document.getElementById('img');
+            $img.src = $canvas.toDataURL(blob);
+
+            var request = new XMLHttpRequest();
+            request.open('POST','/bookdata');
+            request.setRequestHeader();
+            formdata = new FormData();
+            formdata.append("image",blob)
+            request.send(formdata)
+        },'image/png',0.95)
+    })
 
 </script>
 
