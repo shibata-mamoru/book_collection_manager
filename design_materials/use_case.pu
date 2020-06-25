@@ -1,0 +1,18 @@
+@startuml
+
+left to right direction
+actor ユーザー as user
+rectangle 蔵書管理アプリ{
+(書籍を登録する) as UC1
+(書籍の保管場所を登録する) as UC2
+(蔵書を検索する) as UC3
+(蔵書の情報を見る) as UC4
+(蔵書の保管場所を更新する) as UC5
+}
+
+user --> UC1
+user --> UC2
+user --> UC3
+user --> UC4
+user --> UC5
+@enduml
