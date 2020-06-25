@@ -3,6 +3,7 @@ import cv2
 import requests
 import json
 import numpy as np
+from PIL import ImageFont, ImageDraw, Image
 
 def check_isbn(code_str):
     '''ISBNコードである整数文字列ならTrueを返す関数'''
@@ -37,6 +38,17 @@ def get_thumbnail(thumbnail_url):
 
     return img
 
+def convert_text(text,img):
+    fontpath = 'YuGothM.ttc'
+    font = ImageFont.truetype(fontpath, 25)
+    img_pil = Image.fromarray(img)
+    draw = ImageDraw.Draw(img_pil)
+    position = (10, 300)
+    b,g,r,a = 0,255,0,0
+    draw.text(position, text, font = font , fill = (b, g, r, a) )
+    text_img_array = np.array(img_pil)
+    return text_img_array
+
 def run():
     capture = cv2.VideoCapture(0)
     while True:
@@ -51,9 +63,12 @@ def run():
             json_data = get_bookdata_openbd(isbn_code['isbn'])
             book_data = json.loads(json_data)
             if book_data[0]:
-                thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
-                thumbnail_img = get_thumbnail(thumbnail_url)
-                frame[0:thumbnail_img.shape[0],0:thumbnail_img.shape[1]] = thumbnail_img
+                    if 'SupportingResource'  in book_data[0]['onix']['CollateralDetail'].keys():
+                        thumbnail_url = book_data[0]['onix']['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+                        thumbnail_img = get_thumbnail(thumbnail_url)
+                        title = book_data[0]['onix']['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content']
+                        frame[0:thumbnail_img.shape[0],0:thumbnail_img.shape[1]] = thumbnail_img
+                        frame = convert_text(title,frame)
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
