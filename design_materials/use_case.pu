@@ -1,18 +1,27 @@
 @startuml
 
 left to right direction
+actor 非ユーザー as non_user
 actor ユーザー as user
 rectangle 蔵書管理アプリ{
-(書籍を登録する) as UC1
-(書籍の保管場所を登録する) as UC2
-(蔵書を検索する) as UC3
-(蔵書の情報を見る) as UC4
-(蔵書の保管場所を更新する) as UC5
+(入会する) as UC1
+(ログインする) as UC2
+(ログアウトする) as UC3
+(退会する) as UC4
+(書籍を登録する) as UC5
+(書籍の保管場所を登録する) as UC6
+(蔵書を検索する) as UC7
+(蔵書の情報を見る) as UC8
+(蔵書の保管場所を更新する) as UC9
 }
 
-user --> UC1
+non_user --> UC1
 user --> UC2
 user --> UC3
 user --> UC4
 user --> UC5
+user --> UC6
+user --> UC7
+user --> UC8
+user --> UC9
 @enduml
